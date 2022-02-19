@@ -7,39 +7,59 @@ using Cinemachine;
 
 public class CameraController : MonoSingleton<CameraController>
 {
-    [SerializeField]
-    private Vector3 offset;
+    #region SerializeFields
+    
+    [Header("Fly Camera")]
 
     [SerializeField]
-    private float smoothSpeed;
+    private float flyOffsetZ;
 
     [SerializeField]
-    private PathCreator pathCreator;
-
-    [SerializeField]
-    private CinemachineVirtualCamera runCamera;
+    private float flyOffsetY;
     
     [SerializeField]
     private CinemachineVirtualCamera flyCamera;
 
-    private List<CinemachineVirtualCamera> cameras;
+    [Header("Run Camera")]
 
-    private float speed = 9;
+    [SerializeField]
+    private float runOffsetZ;
+
+    [SerializeField]
+    private float runOffsetY;
+
+    [SerializeField]
+    private CinemachineVirtualCamera runCamera;
+
+    [Header("Objects")]
+    
+    [SerializeField]
+    private PathCreator pathCreator;
+
+    #endregion
+    
+    #region Variables
 
     private float distanceTravelled;
 
+    private float smoothSpeed = .125f;
+
+    private List<CinemachineVirtualCamera> cameras;
+
+    #endregion
+
+    #region Unity Methods
 
     private void Start() {
-        Player.Instance.PlayerFlew += OnPlayerFlew;
-        Player.Instance.PlayerRan += OnPlayerRan;
+        Player.Instance.PlayerStartedFly += OnPlayerStartedFly;
+        Player.Instance.PlayerStartedRun += OnPlayerStartedRun;
 
         cameras = new List<CinemachineVirtualCamera>();
 
         cameras.Add(runCamera);
         cameras.Add(flyCamera);
 
-        OnPlayerRan();
-
+        OnPlayerStartedRun();
     }
 
     private void Update() 
@@ -50,21 +70,23 @@ public class CameraController : MonoSingleton<CameraController>
         FlyFollow();
     }
 
+    #endregion
+
+    #region Methods
+
     private void RunFollow()
     {
-        Vector3 desiredPosition = pathCreator.path.GetPointAtDistance(distanceTravelled-15) + Vector3.up * 9;
+        Vector3 desiredPosition = pathCreator.path.GetPointAtDistance(distanceTravelled-runOffsetZ) + Vector3.up * runOffsetY;
         Vector3 smoothedPosition = Vector3.Lerp(runCamera.transform.position, desiredPosition, smoothSpeed);
         runCamera.transform.position = smoothedPosition;
-
         runCamera.transform.LookAt(Player.Instance.transform);
     }
 
     private void FlyFollow()
     {
-        Vector3 desiredPosition = Player.Instance.transform.position + Player.Instance.transform.forward * -18 + Player.Instance.transform.up * 7;
+        Vector3 desiredPosition = Player.Instance.transform.position + Player.Instance.transform.forward * -flyOffsetZ + Player.Instance.transform.up * flyOffsetY;
         Vector3 smoothedPosition = Vector3.Lerp(flyCamera.transform.position, desiredPosition, smoothSpeed);
         flyCamera.transform.position = smoothedPosition;
-
         flyCamera.transform.LookAt(Player.Instance.transform);
     }
 
@@ -76,17 +98,21 @@ public class CameraController : MonoSingleton<CameraController>
         }
     }
 
-    private void OnPlayerFlew()
+    #endregion
+
+    #region Callbacks
+
+    private void OnPlayerStartedFly()
     {
         CloseAllCameras();
         flyCamera.gameObject.SetActive(true);
     }
 
-    private void OnPlayerRan()
+    private void OnPlayerStartedRun()
     {
         CloseAllCameras();
         runCamera.gameObject.SetActive(true);
     }
 
-    
+    #endregion
 }
