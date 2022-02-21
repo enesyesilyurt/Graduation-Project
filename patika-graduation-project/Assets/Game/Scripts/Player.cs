@@ -26,6 +26,10 @@ public class Player : MonoSingleton<Player>
     [SerializeField]
     private float flySideMoveSpeed;
 
+    [Header("Skate")]
+    [SerializeField]
+    private float skateSpeed;
+
     [Header("Components")]
 
     [SerializeField]
@@ -38,6 +42,10 @@ public class Player : MonoSingleton<Player>
 
     [SerializeField]
     private GameObject wing;
+
+    [SerializeField]
+
+    private GameObject skateBoard;
 
     [SerializeField]
     private Transform lookDirection;
@@ -67,6 +75,8 @@ public class Player : MonoSingleton<Player>
     private bool startRun = true;
 
     private bool isFly = false;
+
+    private bool isSkate = false;
 
     private Rigidbody rb;
 
@@ -98,7 +108,16 @@ public class Player : MonoSingleton<Player>
         }
         else
         {
-            Run();
+            OnRoad();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        var skateBoardCollectable = other.GetComponent<SkateBoard>();
+        if(skateBoardCollectable)
+        {
+            other.gameObject.SetActive(false);
+            Skate();
         }
     }
 
@@ -106,11 +125,26 @@ public class Player : MonoSingleton<Player>
 
     #region Methods
 
+    private void Skate()
+    {
+        skateBoard.transform.localScale = Vector3.one * 0.01f;
+        skateBoard.LeanScale(Vector3.one, .7f).setEaseOutCubic();
+        transform.LeanMoveY(.7f,.2f);
+        isSkate = true;
+        animator.SetTrigger("Skate");
+        skateBoard.SetActive(true);
+        runSpeed = skateSpeed;
+    }
+
     private void Fly()
     {
         if (!isFly)
         {
             isFly = true;
+            
+            isSkate = false;
+            skateBoard.LeanMoveY(skateBoard.transform.position.y-6,1.4f).setOnComplete( ()=> skateBoard.SetActive(false));
+            
             transform.LeanRotateX(12, .2f).setEaseInCubic().setOnComplete(() => startFly = true);
             transform.LeanMoveY(transform.position.y + 1, .2f).setEaseInCubic();
             wing.SetActive(true);
@@ -139,11 +173,12 @@ public class Player : MonoSingleton<Player>
         }
     }
 
-    private void Run()
+    private void OnRoad()
     {
         if (isFly)
         {
             wing.transform.LeanScale(Vector3.one * 0.01f, .2f).setEaseInOutSine().setOnComplete(() => { wing.SetActive(false); startRun = true; distanceTravelled = pathCreator.path.GetClosestDistanceAlongPath(transform.position); });
+            skateBoard.LeanMoveY(skateBoard.transform.position.y-6,1.4f).setOnComplete( ()=> skateBoard.SetActive(false));
 
             distanceTravelled = pathCreator.path.GetClosestDistanceAlongPath(transform.position);
 
@@ -175,12 +210,25 @@ public class Player : MonoSingleton<Player>
             lookDirection.position = pathCreator.path.GetPointAtDistance(distanceTravelled + 1);
             lookObject.LookAt(lookDirection);
 
-            transform.position = Vector3.Lerp
-            (
-                transform.position,
-                pathCreator.path.GetPointAtDistance(distanceTravelled) + lookObject.right * sideMove * runSideMoveSpeed,
-                .2f
-            );
+            if (isSkate)
+            {
+                transform.position = Vector3.Lerp
+                (
+                    transform.position,
+                    pathCreator.path.GetPointAtDistance(distanceTravelled) + lookObject.right * sideMove * runSideMoveSpeed + Vector3.up * .3f,
+                    .2f
+                );
+            }
+            else
+            {
+                transform.position = Vector3.Lerp
+                (
+                    transform.position,
+                    pathCreator.path.GetPointAtDistance(distanceTravelled) + lookObject.right * sideMove * runSideMoveSpeed,
+                    .2f
+                );
+            }
+            
 
             follower.position = Vector3.Lerp(follower.position, transform.position, .2f);
             follower.LookAt(transform);
