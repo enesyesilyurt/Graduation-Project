@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using PathCreation;
-using Core;
+using Helpers;
 using Cinemachine;
 
 public class CameraController : MonoSingleton<CameraController>

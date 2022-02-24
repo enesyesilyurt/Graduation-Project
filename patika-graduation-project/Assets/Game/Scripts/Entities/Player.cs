@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Core;
+using Helpers;
 using PathCreation;
 using PathCreation.Examples;
 using UnityEngine;
@@ -112,20 +112,20 @@ public class Player : MonoSingleton<Player>
         }
     }
 
-    private void OnTriggerEnter(Collider other) {
+    /*private void OnTriggerEnter(Collider other) {
         var skateBoardCollectable = other.GetComponent<SkateBoard>();
         if(skateBoardCollectable)
         {
             other.gameObject.SetActive(false);
             Skate();
         }
-    }
+    }*/
 
     #endregion
 
     #region Methods
 
-    private void Skate()
+    private void Skate()//skate gameobject,animation skate, speed float, playerHeight float
     {
         skateBoard.transform.localScale = Vector3.one * 0.01f;
         skateBoard.LeanScale(Vector3.one, .7f).setEaseOutCubic();
@@ -136,7 +136,7 @@ public class Player : MonoSingleton<Player>
         runSpeed = skateSpeed;
     }
 
-    private void Fly()
+    private void Fly()//playerRotation, playerHeight, wing gameobject,animation name, playerSpeed float, playerSideMoveSpeed float,
     {
         if (!isFly)
         {
@@ -173,7 +173,7 @@ public class Player : MonoSingleton<Player>
         }
     }
 
-    private void OnRoad()
+    private void OnRoad()//animation name,
     {
         if (isFly)
         {
