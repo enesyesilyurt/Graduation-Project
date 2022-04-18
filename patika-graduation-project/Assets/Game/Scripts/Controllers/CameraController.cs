@@ -51,15 +51,12 @@ public class CameraController : MonoSingleton<CameraController>
     #region Unity Methods
 
     private void Start() {
-        Player.Instance.PlayerStartedFly += OnPlayerStartedFly;
-        Player.Instance.PlayerStartedRun += OnPlayerStartedRun;
+        Player.Instance.PlayerStateChanged += OnPlayerStateChanged;
 
         cameras = new List<CinemachineVirtualCamera>();
 
         cameras.Add(runCamera);
         cameras.Add(flyCamera);
-
-        OnPlayerStartedRun();
     }
 
     private void Update() 
@@ -76,7 +73,9 @@ public class CameraController : MonoSingleton<CameraController>
 
     private void RunFollow()
     {
-        Vector3 desiredPosition = pathCreator.path.GetPointAtDistance(distanceTravelled-runOffsetZ) + Vector3.up * runOffsetY;
+        var direction = pathCreator.path.GetPointAtDistance(distanceTravelled) - pathCreator.path.GetPointAtDistance(distanceTravelled + 1);
+        
+        Vector3 desiredPosition = Player.Instance.transform.position + direction * runOffsetZ + Vector3.up * runOffsetY;
         Vector3 smoothedPosition = Vector3.Lerp(runCamera.transform.position, desiredPosition, smoothSpeed);
         runCamera.transform.position = smoothedPosition;
         runCamera.transform.LookAt(Player.Instance.transform);
@@ -102,16 +101,20 @@ public class CameraController : MonoSingleton<CameraController>
 
     #region Callbacks
 
-    private void OnPlayerStartedFly()
+    private void OnPlayerStateChanged(PlayerStates newState)
     {
-        CloseAllCameras();
-        flyCamera.gameObject.SetActive(true);
-    }
+        switch(newState)
+        {
+            case PlayerStates.Fly:
+                CloseAllCameras();
+                flyCamera.gameObject.SetActive(true);
+                break;
 
-    private void OnPlayerStartedRun()
-    {
-        CloseAllCameras();
-        runCamera.gameObject.SetActive(true);
+            case PlayerStates.Run:
+                CloseAllCameras();
+                runCamera.gameObject.SetActive(true);
+                break;
+        }
     }
 
     #endregion
