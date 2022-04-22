@@ -140,7 +140,12 @@ public class Player : MonoSingleton<Player>
     {
         var tempSpeed = currentSpeed;
         currentSpeed *= boost;
-        LeanTween.delayedCall(2, ()=> currentSpeed = tempSpeed);
+        LeanTween.delayedCall(3, ()=> 
+        {
+            if(currentSpeed*boost == tempSpeed) 
+                currentSpeed = tempSpeed;
+        });
+        
     }
 
     private void Skate()
