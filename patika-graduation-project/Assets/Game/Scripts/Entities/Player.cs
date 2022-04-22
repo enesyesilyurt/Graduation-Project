@@ -54,6 +54,8 @@ public class Player : MonoSingleton<Player>
 
     #region Variables
 
+    private string currentAnimName;
+
     private float playerHeight;
 
     private float currentSpeed;
@@ -88,13 +90,12 @@ public class Player : MonoSingleton<Player>
         InitMovement();
         rb = GetComponent<Rigidbody>();
         roadMesh = pathCreator.GetComponent<RoadMeshCreator>();
-        UpdatePlayerState(PlayerStates.WaitStart);
-        LeanTween.delayedCall(2, ()=> UpdatePlayerState(PlayerStates.Run));
+        GameManager.Instance.GameStateChanged += OnGameStateChanged;
     }
 
     private void WaitStart()
     {
-        animator.SetTrigger("Idle");
+        SetAnimations("Idle");
     }
 
     private void LateUpdate()
@@ -140,19 +141,20 @@ public class Player : MonoSingleton<Player>
     {
         var tempSpeed = currentSpeed;
         currentSpeed *= boost;
-        LeanTween.delayedCall(3, ()=> 
+        LeanTween.delayedCall(2, ()=> 
         {
             if(currentSpeed*boost == tempSpeed) 
                 currentSpeed = tempSpeed;
         });
-        
     }
 
     private void Skate()
     {
         skateBoard.transform.localScale = Vector3.one * 0.01f;
         skateBoard.LeanScale(Vector3.one, .7f).setEaseOutCubic();
-        animator.SetTrigger("Skate");
+
+        SetAnimations("Skate");
+        
         skateBoard.SetActive(true);
         currentSpeed = skateSpeed;
 
@@ -161,12 +163,7 @@ public class Player : MonoSingleton<Player>
 
     private void FlyMovement()
     {
-        float sideInput = 0;
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
-            sideInput = touch.deltaPosition.x;
-        }
+        float sideInput = InputController.Instance.SideInput;
 
         transform.Rotate(Vector3.up * sideInput * Time.deltaTime * flySideMoveSpeed);
         transform.eulerAngles = new Vector3(12, transform.eulerAngles.y, 0);
@@ -180,7 +177,8 @@ public class Player : MonoSingleton<Player>
         skateBoard.SetActive(false);
 
         transform.LeanRotateX(12, .2f).setEaseInCubic();
-        animator.SetTrigger("Fly");
+
+        SetAnimations("Fly");
 
         transform.LeanMoveY(transform.position.y + 1, .2f).setEaseInCubic();
         wing.SetActive(true);
@@ -210,18 +208,14 @@ public class Player : MonoSingleton<Player>
         transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
         transform.LookAt(pathCreator.path.GetPointAtDistance(distanceTravelled + 1));
 
-        animator.SetTrigger("Run");
+        SetAnimations("Run");
+
         sideMove = 0;
     }
 
     private void RunMovement()
     {
-        float sideInput = 0;
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
-            sideInput = touch.deltaPosition.x;
-        }
+        float sideInput = InputController.Instance.SideInput;
         sideMove += sideInput * Time.deltaTime;
 
         referanceObject.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
@@ -237,6 +231,13 @@ public class Player : MonoSingleton<Player>
         followerObject.position = Vector3.Lerp(followerObject.position, transform.position, .2f);
         followerObject.LookAt(transform);
         transform.rotation = followerObject.rotation;
+    }
+
+    private void SetAnimations(string newAnimName)
+    {
+        animator.ResetTrigger(currentAnimName);
+        animator.SetTrigger(newAnimName);
+        currentAnimName = newAnimName;
     }
 
     public void UpdatePlayerState(PlayerStates newState)
@@ -261,6 +262,21 @@ public class Player : MonoSingleton<Player>
         }
 
         PlayerStateChanged?.Invoke(newState);
+    }
+
+    private void OnGameStateChanged(GameStates newState)
+    {
+        switch (newState)
+        {
+            case GameStates.Start:
+                UpdatePlayerState(PlayerStates.WaitStart);
+                break;
+            case GameStates.Game:
+                UpdatePlayerState(PlayerStates.Run);
+                break;
+            case GameStates.End:
+                break;
+        }
     }
 
     #endregion

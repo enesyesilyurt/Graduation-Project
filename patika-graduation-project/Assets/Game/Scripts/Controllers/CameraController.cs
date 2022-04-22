@@ -8,6 +8,10 @@ using Cinemachine;
 public class CameraController : MonoSingleton<CameraController>
 {
     #region SerializeFields
+
+    [Header("Start Camera")]
+    [SerializeField]
+    private CinemachineVirtualCamera startCamera;
     
     [Header("Fly Camera")]
 
@@ -55,6 +59,7 @@ public class CameraController : MonoSingleton<CameraController>
 
         cameras = new List<CinemachineVirtualCamera>();
 
+        cameras.Add(startCamera);
         cameras.Add(runCamera);
         cameras.Add(flyCamera);
     }
@@ -105,6 +110,10 @@ public class CameraController : MonoSingleton<CameraController>
     {
         switch(newState)
         {
+            case PlayerStates.WaitStart:
+                CloseAllCameras();
+                startCamera.gameObject.SetActive(true);
+                break;
             case PlayerStates.Fly:
                 CloseAllCameras();
                 flyCamera.gameObject.SetActive(true);
