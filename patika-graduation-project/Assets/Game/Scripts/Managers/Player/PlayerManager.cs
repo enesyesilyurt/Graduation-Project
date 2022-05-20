@@ -39,9 +39,9 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
-        var closestDistance = PathController.Instance.PathCreator.path.GetClosestPointOnPath(transform.position);
+        var closestDistance = PathManager.Instance.PathCreator.path.GetClosestPointOnPath(transform.position);
 
-        if (Vector3.Distance(transform.position, closestDistance) > PathController.Instance.RoadMeshCreator.roadWidth)
+        if (Vector3.Distance(transform.position, closestDistance) > PathManager.Instance.RoadMeshCreator.roadWidth)
         {
             if(currentPlayerState == PlayerStates.Run || currentPlayerState == PlayerStates.Skate) { UpdatePlayerState(PlayerStates.Fly); }
         }

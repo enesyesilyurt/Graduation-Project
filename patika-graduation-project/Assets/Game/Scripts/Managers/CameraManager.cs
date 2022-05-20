@@ -4,8 +4,9 @@ using UnityEngine;
 using PathCreation;
 using Helpers;
 using Cinemachine;
+using System;
 
-public class CameraController : MonoSingleton<CameraController>
+public class CameraManager : MonoSingleton<CameraManager>
 {
     #region SerializeFields
 
@@ -44,7 +45,7 @@ public class CameraController : MonoSingleton<CameraController>
 
     private void Awake()
     {
-        pathCreator = PathController.Instance.PathCreator;
+        pathCreator = PathManager.Instance.PathCreator;
         cameras = new List<CinemachineVirtualCamera>();
 
         cameras.Add(startCamera);
@@ -55,6 +56,19 @@ public class CameraController : MonoSingleton<CameraController>
     private void Start()
     {
         player.PlayerStateChanged += OnPlayerStateChanged;
+    }
+
+    private void InitStartCam()
+    {
+        CloseAllCameras();
+        startCamera.gameObject.SetActive(true);
+
+        startCamera.transform.position = new Vector3
+        (
+            player.transform.position.x + 15,
+            player.transform.position.y + 10,
+            player.transform.position.z + 23
+        );
     }
     
     private void LateUpdate()
@@ -101,17 +115,25 @@ public class CameraController : MonoSingleton<CameraController>
 
     private void OnPlayerStateChanged(PlayerStates currentState, PlayerStates newState)
     {
+        if(currentState == PlayerStates.WaitStart)
+        {
+            LeanTween.delayedCall(1.5f, ()=> 
+            {
+                CloseAllCameras();
+                runCamera.gameObject.SetActive(true);
+            });
+            return;
+        }
+
         switch (newState)
         {
             case PlayerStates.WaitStart:
-                CloseAllCameras();
-                startCamera.gameObject.SetActive(true);
+                InitStartCam();
                 break;
             case PlayerStates.Fly:
                 CloseAllCameras();
                 flyCamera.gameObject.SetActive(true);
                 break;
-
             case PlayerStates.Run:
                 CloseAllCameras();
                 runCamera.gameObject.SetActive(true);

@@ -2,7 +2,7 @@ using System;
 using Helpers;
 using UnityEngine;
 
-public class InputController : MonoSingleton<InputController>
+public class InputSystem : MonoSingleton<InputSystem>
 {
     public float SideInput { get; private set; }
     

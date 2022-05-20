@@ -47,8 +47,8 @@ public class PlayerMovementManager : MonoBehaviour
 
 	private void Awake() 
 	{
-        pathCreator = PathController.Instance.PathCreator;
-        roadMesh = PathController.Instance.RoadMeshCreator;
+        pathCreator = PathManager.Instance.PathCreator;
+        roadMesh = PathManager.Instance.RoadMeshCreator;
 
         distanceTravelled = 5;
 		player = GetComponent<PlayerManager>();
@@ -89,7 +89,7 @@ public class PlayerMovementManager : MonoBehaviour
 
 	private void FlyMovement()
     {
-        float sideInput = InputController.Instance.SideInput;
+        float sideInput = InputSystem.Instance.SideInput;
         transform.eulerAngles = new Vector3(12, transform.eulerAngles.y, 0);
         rb.velocity = transform.forward * flySpeed * Time.deltaTime;
 
@@ -98,7 +98,7 @@ public class PlayerMovementManager : MonoBehaviour
 
 	private void OnRoadMovement()
     {
-        float sideInput = InputController.Instance.SideInput;
+        float sideInput = InputSystem.Instance.SideInput;
         sideMove += sideInput * Time.deltaTime;
 
         referanceObject.position = pathCreator.path.GetPointAtDistance(distanceTravelled);

@@ -10,7 +10,7 @@ public class GameManager : MonoSingleton<GameManager>
 
     private void Start() 
     {
-        InputController.Instance.Clicked += OnClicked;
+        InputSystem.Instance.Clicked += OnClicked;
         UpdateGameState(GameStates.Start);  
     }
 
@@ -32,7 +32,7 @@ public class GameManager : MonoSingleton<GameManager>
     {
         if(touch.phase != TouchPhase.Began) return;
         
-        InputController.Instance.Clicked -= OnClicked;
+        InputSystem.Instance.Clicked -= OnClicked;
         UpdateGameState(GameStates.Game);
     }
 

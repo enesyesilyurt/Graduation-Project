@@ -3,7 +3,7 @@ using PathCreation;
 using PathCreation.Examples;
 using UnityEngine;
 
-public class PathController : MonoSingleton<PathController>
+public class PathManager : MonoSingleton<PathManager>
 {
     [SerializeField] private PathCreator pathCreator;
     [SerializeField] private RoadMeshCreator roadMeshCreator;
