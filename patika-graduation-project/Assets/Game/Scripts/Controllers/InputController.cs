@@ -6,7 +6,7 @@ public class InputController : MonoSingleton<InputController>
 {
     public float SideInput { get; private set; }
 
-    public event Action Clicked;
+    public event Action<Touch> Clicked;
 
     private bool isFirstTouch = false;
 
@@ -27,8 +27,6 @@ public class InputController : MonoSingleton<InputController>
         Touch touch = Input.GetTouch(0);
         SideInput = touch.deltaPosition.x;
 
-        if(!isFirstTouch) return;
-        isFirstTouch = false;
-        Clicked?.Invoke();
+        Clicked?.Invoke(touch);
     }
 }

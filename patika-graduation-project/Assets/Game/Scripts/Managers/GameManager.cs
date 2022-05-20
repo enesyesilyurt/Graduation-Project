@@ -29,11 +29,12 @@ public class GameManager : MonoSingleton<GameManager>
         GameStateChanged?.Invoke(newState);
     }
 
-    private void OnClicked()
+    private void OnClicked(Touch touch)
     {
+        if(touch.phase != TouchPhase.Began) return;
+        
         InputController.Instance.Clicked -= OnClicked;
         UpdateGameState(GameStates.Game);
-        Debug.Log("click");
     }
 
 }
