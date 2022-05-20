@@ -14,7 +14,6 @@ public class GameManager : MonoSingleton<GameManager>
         UpdateGameState(GameStates.Start);  
     }
 
-
     public void UpdateGameState(GameStates newState)
     {
         switch (newState)

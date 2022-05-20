@@ -9,41 +9,29 @@ public class CameraController : MonoSingleton<CameraController>
 {
     #region SerializeFields
 
+    [SerializeField] private PlayerManager player;
+
     [Header("Start Camera")]
-    [SerializeField]
-    private CinemachineVirtualCamera startCamera;
-    
+
+    [SerializeField] private CinemachineVirtualCamera startCamera;
+
     [Header("Fly Camera")]
 
-    [SerializeField]
-    private float flyOffsetZ;
-
-    [SerializeField]
-    private float flyOffsetY;
-    
-    [SerializeField]
-    private CinemachineVirtualCamera flyCamera;
+    [SerializeField] private CinemachineVirtualCamera flyCamera;
+    [SerializeField] private float flyOffsetZ;
+    [SerializeField] private float flyOffsetY;
 
     [Header("Run Camera")]
 
-    [SerializeField]
-    private float runOffsetZ;
-
-    [SerializeField]
-    private float runOffsetY;
-
-    [SerializeField]
-    private CinemachineVirtualCamera runCamera;
-
-    [Header("Objects")]
-    
-    [SerializeField]
-    private PathCreator pathCreator;
+    [SerializeField] private CinemachineVirtualCamera runCamera;
+    [SerializeField] private float runOffsetZ;
+    [SerializeField] private float runOffsetY;
 
     #endregion
-    
+
     #region Variables
 
+    private PathCreator pathCreator;
     private float distanceTravelled;
 
     private float smoothSpeed = .125f;
@@ -54,9 +42,9 @@ public class CameraController : MonoSingleton<CameraController>
 
     #region Unity Methods
 
-    private void Start() {
-        Player.Instance.PlayerStateChanged += OnPlayerStateChanged;
-
+    private void Awake()
+    {
+        pathCreator = PathController.Instance.PathCreator;
         cameras = new List<CinemachineVirtualCamera>();
 
         cameras.Add(startCamera);
@@ -64,9 +52,14 @@ public class CameraController : MonoSingleton<CameraController>
         cameras.Add(flyCamera);
     }
 
-    private void Update() 
+    private void Start()
     {
-        distanceTravelled = Player.Instance.DistanceTravelled;
+        player.PlayerStateChanged += OnPlayerStateChanged;
+    }
+    
+    private void LateUpdate()
+    {
+        distanceTravelled = player.DistanceTravelled;
 
         RunFollow();
         FlyFollow();
@@ -79,19 +72,19 @@ public class CameraController : MonoSingleton<CameraController>
     private void RunFollow()
     {
         var direction = pathCreator.path.GetPointAtDistance(distanceTravelled) - pathCreator.path.GetPointAtDistance(distanceTravelled + 1);
-        
-        Vector3 desiredPosition = Player.Instance.transform.position + direction * runOffsetZ + Vector3.up * runOffsetY;
+
+        Vector3 desiredPosition = player.transform.position + direction * runOffsetZ + Vector3.up * runOffsetY;
         Vector3 smoothedPosition = Vector3.Lerp(runCamera.transform.position, desiredPosition, smoothSpeed);
         runCamera.transform.position = smoothedPosition;
-        runCamera.transform.LookAt(Player.Instance.transform);
+        runCamera.transform.LookAt(player.transform);
     }
 
     private void FlyFollow()
     {
-        Vector3 desiredPosition = Player.Instance.transform.position + Player.Instance.transform.forward * -flyOffsetZ + Player.Instance.transform.up * flyOffsetY;
+        Vector3 desiredPosition = player.transform.position + player.transform.forward * -flyOffsetZ + player.transform.up * flyOffsetY;
         Vector3 smoothedPosition = Vector3.Lerp(flyCamera.transform.position, desiredPosition, smoothSpeed);
         flyCamera.transform.position = smoothedPosition;
-        flyCamera.transform.LookAt(Player.Instance.transform);
+        flyCamera.transform.LookAt(player.transform);
     }
 
     private void CloseAllCameras()
@@ -106,9 +99,9 @@ public class CameraController : MonoSingleton<CameraController>
 
     #region Callbacks
 
-    private void OnPlayerStateChanged(PlayerStates newState)
+    private void OnPlayerStateChanged(PlayerStates currentState, PlayerStates newState)
     {
-        switch(newState)
+        switch (newState)
         {
             case PlayerStates.WaitStart:
                 CloseAllCameras();

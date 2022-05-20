@@ -4,13 +4,9 @@ using UnityEngine;
 
 public class SpeedBoost : Collectable
 {
-    private void Start() 
+    protected override void Collect(PlayerManager player)
     {
-        
-    }
-    protected override void Collect()
-    {
-        base.Collect();
-        Player.Instance.BoostSpeed(2f);
+        base.Collect(player);
+        player.GetComponent<PlayerMovementManager>().BoostSpeed(2f);
     }
 }

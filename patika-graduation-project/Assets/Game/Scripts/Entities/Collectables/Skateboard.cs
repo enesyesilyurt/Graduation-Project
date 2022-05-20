@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Skateboard : Collectable
 {
-    
     [SerializeField]
     private float speed;
 
@@ -12,9 +11,10 @@ public class Skateboard : Collectable
     {
         transform.RotateAround(transform.position, Vector3.up, speed * Time.deltaTime);
     }
-    protected override void Collect()
+    
+    protected override void Collect(PlayerManager player)
     {
-        base.Collect();
-        Player.Instance.UpdatePlayerState(PlayerStates.Skate);
+        base.Collect(player);
+        player.UpdatePlayerState(PlayerStates.Skate);
     }
 }

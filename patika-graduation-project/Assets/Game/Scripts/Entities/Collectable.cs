@@ -6,14 +6,14 @@ public abstract class Collectable : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        Player player = other.GetComponent<Player>();
+        PlayerManager player = other.GetComponent<PlayerManager>();
         if (player != null)
         {
-            Collect();
+            Collect(player);
         }
     }
 
-    protected virtual void Collect()
+    protected virtual void Collect(PlayerManager player)
     {
         gameObject.SetActive(false);
     }
