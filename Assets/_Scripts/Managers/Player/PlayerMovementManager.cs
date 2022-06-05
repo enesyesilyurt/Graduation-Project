@@ -48,8 +48,12 @@ public class PlayerMovementManager : MonoBehaviour
 	{
         pathCreator = PathManager.Instance.PathCreator;
         var position = transform.position;
-        referanceObject = Instantiate(new GameObject(), pathCreator.path.GetClosestPointOnPath(position), Quaternion.identity).transform;
-        followerObject = Instantiate(new GameObject(), position - transform.forward * - .2f, Quaternion.identity).transform;
+
+        referanceObject = new GameObject("referanceObject").transform;
+        referanceObject.position = pathCreator.path.GetClosestPointOnPath(position);
+
+        followerObject = new GameObject("followerObject").transform;
+        followerObject.position = position - transform.forward * - .2f;
 
         distanceTravelled = 5;
 		player = GetComponent<PlayerManager>();

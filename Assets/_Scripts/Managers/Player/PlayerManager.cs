@@ -11,7 +11,7 @@ public class PlayerManager : MonoBehaviour
     #region Variables
 
     private PlayerMovementManager playerMovement;
-    private PlayerStates currentPlayerState;
+    private PlayerStates currentPlayerState = PlayerStates.End;
     public float DistanceTravelled => playerMovement.DistanceTravelled;
 
     #endregion
@@ -30,7 +30,7 @@ public class PlayerManager : MonoBehaviour
 
     #region Unity Methods
 
-    private void Start()
+    private void Awake() 
     {
         playerMovement = GetComponent<PlayerMovementManager>();
 

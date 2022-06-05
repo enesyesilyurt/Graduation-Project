@@ -50,10 +50,7 @@ public class CameraManager : Singleton<CameraManager>
             runCamera,
             flyCamera
         };
-    }
 
-    private void Start()
-    {
         player.PlayerStateChanged += OnPlayerStateChanged;
     }
 
@@ -76,7 +73,7 @@ public class CameraManager : Singleton<CameraManager>
         distanceTravelled = player.DistanceTravelled;
 
         RunFollow();
-        FlyFollow();
+        //FlyFollow();
     }
 
     #endregion
@@ -116,16 +113,6 @@ public class CameraManager : Singleton<CameraManager>
 
     private void OnPlayerStateChanged(PlayerStates currentState, PlayerStates newState)
     {
-        if(currentState == PlayerStates.WaitStart)
-        {
-            LeanTween.delayedCall(1.5f, ()=> 
-            {
-                CloseAllCameras();
-                runCamera.gameObject.SetActive(true);
-            });
-            return;
-        }
-
         switch (newState)
         {
             case PlayerStates.WaitStart:

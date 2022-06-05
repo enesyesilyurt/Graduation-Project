@@ -6,9 +6,13 @@ public class GameManager : Singleton<GameManager>
 {
     public event Action<GameStates> GameStateChanged;
 
-    private void Start() 
+    private void Awake() 
     {
         InputSystem.Instance.Clicked += OnClicked;
+    }
+
+    private void Start() 
+    {
         UpdateGameState(GameStates.Start);  
     }
 
