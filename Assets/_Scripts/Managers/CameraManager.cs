@@ -8,7 +8,7 @@ public class CameraManager : Singleton<CameraManager>
 {
     #region SerializeFields
 
-    [SerializeField] private PlayerManager player;
+    [SerializeField] private Player player;
 
     [Header("Start Camera")]
 
@@ -51,7 +51,7 @@ public class CameraManager : Singleton<CameraManager>
             flyCamera
         };
 
-        player.PlayerStateChanged += OnPlayerStateChanged;
+        player.ContenderStateChanged += OnContenderStateChanged;
     }
 
     private void InitStartCam()
@@ -111,18 +111,18 @@ public class CameraManager : Singleton<CameraManager>
 
     #region Callbacks
 
-    private void OnPlayerStateChanged(PlayerStates currentState, PlayerStates newState)
+    private void OnContenderStateChanged(ContenderState currentState, ContenderState newState)
     {
         switch (newState)
         {
-            case PlayerStates.WaitStart:
+            case ContenderState.WaitStart:
                 InitStartCam();
                 break;
-            case PlayerStates.Fly:
+            case ContenderState.Fly:
                 CloseAllCameras();
                 flyCamera.gameObject.SetActive(true);
                 break;
-            case PlayerStates.Run:
+            case ContenderState.Run:
                 CloseAllCameras();
                 runCamera.gameObject.SetActive(true);
                 break;

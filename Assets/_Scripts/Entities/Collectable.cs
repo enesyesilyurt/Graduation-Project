@@ -1,17 +1,18 @@
-﻿using UnityEngine;
+﻿using Shadout.Controllers;
+using UnityEngine;
 
 public abstract class Collectable : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        PlayerManager player = other.GetComponent<PlayerManager>();
-        if (player != null)
+        ContenderBase contender = other.GetComponent<ContenderBase>();
+        if (contender != null)
         {
-            Collect(player);
+            Collect(contender);
         }
     }
 
-    protected virtual void Collect(PlayerManager player)
+    protected virtual void Collect(ContenderBase contender)
     {
         gameObject.SetActive(false);
     }

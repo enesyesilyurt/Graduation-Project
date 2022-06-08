@@ -13,13 +13,13 @@ public class GoTargetState : IState
     public GoTargetState(Agent agent, Rigidbody rb, float flySpeed)
     {
         this.agent = agent;
-        this.target = agent.target;
         this.flySpeed = flySpeed;
         this.rb = rb;
     }
 
     public void OnEnter()
     {
+        target = agent.target;
         agent.transform.LookAt(target);
         agent.transform.LeanMoveY(agent.transform.position.y + 1, .2f).setEaseInCubic();
     }

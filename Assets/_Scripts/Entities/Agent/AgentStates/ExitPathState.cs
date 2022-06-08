@@ -3,37 +3,47 @@ using UnityEngine;
 
 public class ExitPathState : IState
 {
-    private float direction;
     private Agent agent;
-    private AgentMovement agentMovement;
+    private AgentMovementController _agentMovementController;
     private float sideMove;
     private Transform referanceObject;
     private Transform followerObject;
     private float runSideMoveSpeed;
 
-    public ExitPathState(Agent agent, AgentMovement agentMovement, float direction)
+    public ExitPathState(Agent agent, AgentMovementController agentMovementController)
     {
-        this.direction = direction;
         this.agent = agent;
-        this.agentMovement = agentMovement;
-        this.referanceObject = agentMovement.ReferanceObject;
-        this.followerObject = agentMovement.FollowerObject;
-        this.runSideMoveSpeed = agentMovement.RunSideMoveSpeed;
+        this._agentMovementController = agentMovementController;
+        this.referanceObject = agentMovementController.ReferenceObject;
+        this.followerObject = agentMovementController.FollowerObject;
+        this.runSideMoveSpeed = agentMovementController.RunSideMoveSpeed;
     }
 
     public void OnEnter()
     {
-        agentMovement.SideInput = 0.1f;
+        agent.target = PathManager.Instance.PathCreator.path.GetPointAtDistance
+        (
+            agent.DistanceTravelled + agent.TargetFront
+        );
+        
+        if (Vector3.Distance(agent.transform.right + agent.transform.position, agent.target) > Vector3.Distance(-agent.transform.right + agent.transform.position, agent.target))
+        {
+            _agentMovementController.SideInput = -0.1f;
+        }
+        else
+        {
+            _agentMovementController.SideInput = 0.1f;
+        }
     }
 
     public void OnExit()
     {
-        agentMovement.SideInput = 0;
+        _agentMovementController.SideInput = 0;
     }
 
     public void Tick()
     {
-        sideMove += agentMovement.SideInput * Time.deltaTime;
+        sideMove += _agentMovementController.SideInput * Time.deltaTime;
 
         referanceObject.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled);
         referanceObject.LookAt(PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled + 1));
@@ -42,7 +52,7 @@ public class ExitPathState : IState
         (tempTransform = agent.transform).position = Vector3.Lerp
         (
             agent.transform.position,
-            PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled) + referanceObject.right * (sideMove * runSideMoveSpeed) + Vector3.up * agentMovement.playerHeight,
+            PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled) + referanceObject.right * (sideMove * runSideMoveSpeed) + Vector3.up * _agentMovementController.playerHeight,
             .2f
         );
 

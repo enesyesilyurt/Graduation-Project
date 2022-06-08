@@ -1,8 +1,10 @@
+using Shadout.Controllers;
+
 public class SpeedBoost : Collectable
 {
-    protected override void Collect(PlayerManager player)
+    protected override void Collect(ContenderBase contender)
     {
-        base.Collect(player);
-        player.GetComponent<PlayerMovementManager>().BoostSpeed(2f);
+        base.Collect(contender);
+        contender.GetComponent<ContenderMovementBase>().BoostSpeed(2f);
     }
 }

@@ -1,3 +1,4 @@
+using Shadout.Controllers;
 using UnityEngine;
 
 public class Skateboard : Collectable
@@ -10,9 +11,9 @@ public class Skateboard : Collectable
         transform.RotateAround(transform.position, Vector3.up, speed * Time.deltaTime);
     }
     
-    protected override void Collect(PlayerManager player)
+    protected override void Collect(ContenderBase contender)
     {
-        base.Collect(player);
-        player.UpdatePlayerState(PlayerStates.Skate);
+        base.Collect(contender);
+        contender.UpdateContenderState(ContenderState.Skate);
     }
 }
