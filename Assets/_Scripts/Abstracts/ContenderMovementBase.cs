@@ -60,9 +60,11 @@ namespace Shadout.Controllers
 			distanceTravelled = 5;
 			contender = GetComponent<ContenderBase>();
 			rb = GetComponent<Rigidbody>();
+
+			contender.ContenderStateChanged += OnContenderStateChanged;
 		}
 
-		protected virtual void Update()
+        protected virtual void Update()
 		{
 			distanceTravelled += currentSpeed * Time.deltaTime;
 		}
@@ -87,6 +89,14 @@ namespace Shadout.Controllers
 					currentSpeed = tempSpeed;
 			});
 		}
+
+        private void OnContenderStateChanged(ContenderState currentState, ContenderState newState)
+        {
+            if (newState == ContenderState.End)
+			{
+				currentSpeed = 0;
+			}
+        }
 
 		#endregion
 	}

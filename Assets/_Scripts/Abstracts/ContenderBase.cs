@@ -47,6 +47,18 @@ namespace Shadout.Controllers
 			currentContenderState = newState;
 		}
 
+		
+    	public void OnWinGame(int count, Vector3 newPosition)
+    	{
+        	UpdateContenderState(ContenderState.End);
+
+			transform.LeanMoveX(newPosition.x, 1).setEaseOutSine();
+			transform.LeanMoveY(newPosition.y, 1).setEaseOutSine();
+			transform.LeanMoveZ(newPosition.z, 1).setEaseOutBack();
+
+			transform.LeanRotateAround(Vector3.up, 180, 1);
+    	}
+
 		#endregion
 
 		#region Callbacks
@@ -62,6 +74,7 @@ namespace Shadout.Controllers
 					UpdateContenderState(ContenderState.Run);
 					break;
 				case GameStates.End:
+					UpdateContenderState(ContenderState.End);
 					break;
 			}
 		}

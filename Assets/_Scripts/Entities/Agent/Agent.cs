@@ -35,6 +35,8 @@ public class Agent : ContenderBase
 
     private void Update()
     {
+        if(currentContenderState == ContenderState.End) return;
+        
         if (timer < controlTime)
         {
             timer += Time.deltaTime;
@@ -114,6 +116,7 @@ public class Agent : ContenderBase
 
         stateMachine.SetState(waitStart);
     }
+
 
     private void OnContenderStateChanged(ContenderState currentState, ContenderState newState)
     {
