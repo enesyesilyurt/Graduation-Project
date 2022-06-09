@@ -33,8 +33,6 @@ public class RunState : IState
         tempTransform.rotation = rotation;
         agent.transform.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled);
         agent.transform.LookAt(PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled + 1));
-
-        sideMove = 0;
     }
 
     public void OnExit()
@@ -44,8 +42,6 @@ public class RunState : IState
 
     public void Tick()
     {
-        //sideMove += agentMovement.SideInput * Time.deltaTime;
-
         referanceObject.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled);
         referanceObject.LookAt(PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled + 1));
 
@@ -53,7 +49,7 @@ public class RunState : IState
         (tempTransform = agent.transform).position = Vector3.Lerp
         (
             agent.transform.position,
-            PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled) + referanceObject.right * (sideMove * runSideMoveSpeed) + Vector3.up * agentMovementController.playerHeight,
+            PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled) + referanceObject.right * agentMovementController.SidePosition  + Vector3.up * agentMovementController.playerHeight,
             .2f
         );
 

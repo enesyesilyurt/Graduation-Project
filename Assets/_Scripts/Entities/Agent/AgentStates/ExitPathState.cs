@@ -52,7 +52,7 @@ public class ExitPathState : IState
         (tempTransform = agent.transform).position = Vector3.Lerp
         (
             agent.transform.position,
-            PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled) + referanceObject.right * (sideMove * runSideMoveSpeed) + Vector3.up * _agentMovementController.playerHeight,
+            PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled) + referanceObject.right * (sideMove * runSideMoveSpeed) + referanceObject.right * _agentMovementController.SidePosition + Vector3.up * _agentMovementController.playerHeight,
             .2f
         );
 

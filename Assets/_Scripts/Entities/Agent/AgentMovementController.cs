@@ -6,6 +6,13 @@ namespace Shadout.Controllers
 {
     public class AgentMovementController : ContenderMovementBase
     {
+        #region Serializefields
+
+        [SerializeField]
+        private float sidePosition;
+
+        #endregion
+
         #region Variables
 
 		public float SideInput = 1f;
@@ -15,6 +22,7 @@ namespace Shadout.Controllers
         #region Props
         
         public float RunSideMoveSpeed => runSideMoveSpeed;
+        public float SidePosition => sidePosition;
         public Transform FollowerObject => followerObject;
         public Transform ReferenceObject => referenceObject;
 
@@ -37,6 +45,7 @@ namespace Shadout.Controllers
             {
                 case ContenderState.WaitStart:
 					distanceTravelled = PathManager.Instance.PathCreator.path.GetClosestDistanceAlongPath(transform.position);
+                    transform.position += referenceObject.right * sidePosition;
                     break;
                 case ContenderState.Run:
                     distanceTravelled = PathManager.Instance.PathCreator.path.GetClosestDistanceAlongPath(transform.position);

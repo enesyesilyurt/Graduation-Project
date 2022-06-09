@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Shadout.Controllers;
 using UnityEngine;
@@ -17,6 +18,8 @@ public class Agent : ContenderBase
     private StateMachine stateMachine;
     private List<IState> states;
     private Rigidbody rb;
+    private float timer = 0;
+    private float controlTime = 2;
 
     protected override void Awake()
     {
@@ -26,26 +29,35 @@ public class Agent : ContenderBase
 
     private void Start()
     {
+        ContenderStateChanged += OnContenderStateChanged;
         InitStateMachine();
     }
-    
+
     private void Update()
     {
-        var closestDistance = PathManager.Instance.PathCreator.path.GetClosestPointOnPath(transform.position);
-			
-        if (Vector3.Distance(transform.position, closestDistance) > PathManager.Instance.RoadMeshCreator.roadWidth)
+        if (timer < controlTime)
         {
-            if (currentContenderState == ContenderState.Run || currentContenderState == ContenderState.Skate)
-            {
-                UpdateContenderState(ContenderState.Fly);
-            }
+            timer += Time.deltaTime;
         }
-        else if(transform.position.y >= closestDistance.y - .5f)
+        else
         {
-            if (currentContenderState == ContenderState.Fly)
+            var closestDistance = PathManager.Instance.PathCreator.path.GetClosestPointOnPath(transform.position);
+
+            if (Vector3.Distance(transform.position, closestDistance) > PathManager.Instance.RoadMeshCreator.roadWidth)
             {
-                UpdateContenderState(ContenderState.Run);
+                if (currentContenderState == ContenderState.Run || currentContenderState == ContenderState.Skate)
+                {
+                    UpdateContenderState(ContenderState.Fly);
+                }
             }
+            else if (transform.position.y >= closestDistance.y - .5f)
+            {
+                if (currentContenderState == ContenderState.Fly)
+                {
+                    UpdateContenderState(ContenderState.Run);
+                }
+            }
+
         }
         
         stateMachine.Tick();
@@ -101,5 +113,13 @@ public class Agent : ContenderBase
         );
 
         stateMachine.SetState(waitStart);
+    }
+
+    private void OnContenderStateChanged(ContenderState currentState, ContenderState newState)
+    {
+        if (newState == ContenderState.Run)
+        {
+            timer = 0;
+        }
     }
 }
