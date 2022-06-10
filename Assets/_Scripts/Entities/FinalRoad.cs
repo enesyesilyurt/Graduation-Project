@@ -16,10 +16,17 @@ namespace Shadout.Controllers
 		[SerializeField]
 		private Transform thirdPlace;
 
+		[SerializeField]
+		private Transform particlesParent;
+
+		[SerializeField]
+		private Transform radialBackGround;
+
 		#endregion
 
 		#region Variables
 
+		private Vector3 radialBackGroundScale;
 		private int index = 0;
 
 		#endregion
@@ -37,6 +44,9 @@ namespace Shadout.Controllers
 		private void Awake() 
 		{
 			GameManager.Instance.GameStateChanged += OnGameStateChanged;
+
+			radialBackGroundScale = radialBackGround.localScale;
+			particlesParent.gameObject.SetActive(false);
 		}
 
 		private void OnTriggerEnter(Collider other) 
@@ -61,6 +71,12 @@ namespace Shadout.Controllers
 			}
 		}
 
+		private void OpenAnimatedObjects()
+		{
+			particlesParent.gameObject.SetActive(true);
+			radialBackGround.localScale = radialBackGroundScale;
+		}
+
         #endregion
 
         #region Methods
@@ -79,6 +95,7 @@ namespace Shadout.Controllers
 				case GameStates.Game:
 					break;
 				case GameStates.End:
+					OpenAnimatedObjects();
 					break;
 			}
         }

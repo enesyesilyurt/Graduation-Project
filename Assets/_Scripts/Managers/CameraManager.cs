@@ -3,6 +3,7 @@ using UnityEngine;
 using PathCreation;
 using Cinemachine;
 using NoName.Utilities;
+using System;
 
 public class CameraManager : Singleton<CameraManager>
 {
@@ -25,6 +26,10 @@ public class CameraManager : Singleton<CameraManager>
     [SerializeField] private CinemachineVirtualCamera runCamera;
     [SerializeField] private float runOffsetZ;
     [SerializeField] private float runOffsetY;
+
+    [Header("End Camera")]
+
+    [SerializeField] private CinemachineVirtualCamera endCamera;
 
     #endregion
 
@@ -52,6 +57,7 @@ public class CameraManager : Singleton<CameraManager>
         };
 
         player.ContenderStateChanged += OnContenderStateChanged;
+        GameManager.Instance.GameStateChanged += OnGameStateChanged;
     }
 
     private void InitStartCam()
@@ -66,6 +72,12 @@ public class CameraManager : Singleton<CameraManager>
             position.y + 10,
             position.z + 23
         );
+    }
+
+    private void InitEndCam()
+    {
+        CloseAllCameras();
+        endCamera.gameObject.SetActive(true);
     }
     
     private void LateUpdate()
@@ -101,23 +113,33 @@ public class CameraManager : Singleton<CameraManager>
 
     private void CloseAllCameras()
     {
-        foreach (var virtualCamera in cameras)
-        {
-            virtualCamera.gameObject.SetActive(false);
-        }
+        startCamera.gameObject.SetActive(false);
+        runCamera.gameObject.SetActive(false);
+        flyCamera.gameObject.SetActive(false);
+        endCamera.gameObject.SetActive(false);
     }
 
     #endregion
 
     #region Callbacks
 
+    private void OnGameStateChanged(GameStates newState)
+    {
+        switch (newState)
+        {
+            case GameStates.Start:
+                InitStartCam();
+                break;
+            case GameStates.End:
+                InitEndCam();
+                break;
+        }
+    }
+
     private void OnContenderStateChanged(ContenderState currentState, ContenderState newState)
     {
         switch (newState)
         {
-            case ContenderState.WaitStart:
-                InitStartCam();
-                break;
             case ContenderState.Fly:
                 CloseAllCameras();
                 flyCamera.gameObject.SetActive(true);
