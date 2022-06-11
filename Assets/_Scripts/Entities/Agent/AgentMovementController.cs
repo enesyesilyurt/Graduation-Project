@@ -30,11 +30,6 @@ namespace Shadout.Controllers
 
         #region Unity Methods
 
-        private void Start()
-        {
-            contender.ContenderStateChanged += OnContenderStateChanged;
-        }
-
         #endregion
 
         #region Callbacks

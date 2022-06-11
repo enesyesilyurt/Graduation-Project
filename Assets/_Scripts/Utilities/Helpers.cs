@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Utilities
+namespace Shadout.Utilities
 {
     public static class Helpers
     {

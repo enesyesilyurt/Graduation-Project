@@ -41,14 +41,6 @@ namespace Shadout.Controllers
 
 		#region Unity Methods
 
-		private void Awake() 
-		{
-			GameManager.Instance.GameStateChanged += OnGameStateChanged;
-
-			radialBackGroundScale = radialBackGround.localScale;
-			particlesParent.gameObject.SetActive(false);
-		}
-
 		private void OnTriggerEnter(Collider other) 
 		{
 			var contender = other.GetComponent<ContenderBase>();
@@ -71,6 +63,20 @@ namespace Shadout.Controllers
 			}
 		}
 
+		public void InitFinalRoad()
+		{
+			GameManager.Instance.GameStateChanged += OnGameStateChanged;
+
+			radialBackGroundScale = radialBackGround.localScale;
+		}
+
+		private void InitAnimatedObject()
+		{
+			particlesParent.gameObject.SetActive(false);
+			transform.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(-.001f);
+			transform.eulerAngles = new Vector3(0, 90, 0);
+		}
+
 		private void OpenAnimatedObjects()
 		{
 			particlesParent.gameObject.SetActive(true);
@@ -90,6 +96,7 @@ namespace Shadout.Controllers
             switch (newState)
 			{
 				case GameStates.Start:
+					InitAnimatedObject();
 					index = 0;
 					break;
 				case GameStates.Game:

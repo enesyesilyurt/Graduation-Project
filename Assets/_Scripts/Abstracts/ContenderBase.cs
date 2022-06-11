@@ -11,6 +11,9 @@ namespace Shadout.Controllers
 		#region Variables
 
 		protected ContenderMovementBase contenderMovement;
+		protected ContenderAnimationController contenderAnimationController;
+		protected ContenderVehicleController contenderVehicleController;
+
 		protected ContenderState currentContenderState = ContenderState.End;
 
 		#endregion
@@ -30,16 +33,22 @@ namespace Shadout.Controllers
 
 		#region Unity Methods
 
-		protected virtual void Awake()
-		{
-			contenderMovement = GetComponent<ContenderMovementBase>();
-
-			GameManager.Instance.GameStateChanged += OnGameStateChanged;
-		}
-
 		#endregion
 
 		#region Methods
+
+		public virtual void InitContender()
+		{
+			contenderMovement = GetComponent<ContenderMovementBase>();
+			contenderAnimationController = GetComponent<ContenderAnimationController>();
+			contenderVehicleController = GetComponent<ContenderVehicleController>();
+
+			contenderAnimationController.Init();
+			contenderVehicleController.Init();
+			contenderMovement.Init();
+
+			GameManager.Instance.GameStateChanged += OnGameStateChanged;
+		}
 		
 		public void UpdateContenderState(ContenderState newState)
 		{

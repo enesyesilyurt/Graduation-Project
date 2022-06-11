@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace NoName.Models
+namespace Shadout.Models
 {
     public static class Developer
     {

@@ -1,5 +1,5 @@
 using System;
-using NoName.Utilities;
+using Shadout.Utilities;
 using UnityEngine;
 
 public class InputSystem : Singleton<InputSystem>

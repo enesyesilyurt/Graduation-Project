@@ -1,19 +1,37 @@
 using System;
-using NoName.Utilities;
+using Shadout.Models;
+using Shadout.Utilities;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+    #region Events
+
     public event Action<GameStates> GameStateChanged;
+
+    #endregion
+
+    #region Unity Methods
 
     private void Awake() 
     {
-        InputSystem.Instance.Clicked += OnClicked;
+        LoadGame();
     }
 
     private void Start() 
     {
-        UpdateGameState(GameStates.Start);  
+        UpdateGameState(GameStates.Start);
+
+        InputSystem.Instance.Clicked += OnClicked;
+    }
+
+    #endregion
+
+    #region Methods
+
+    private void LoadGame()
+    {
+        SaveSystem.Instance.InitSaveSystem();
     }
 
     public void UpdateGameState(GameStates newState)
@@ -30,6 +48,10 @@ public class GameManager : Singleton<GameManager>
         GameStateChanged?.Invoke(newState);
     }
 
+    #endregion
+
+    #region CallBacks
+
     private void OnClicked(Touch touch)
     {
         if(touch.phase != TouchPhase.Began) return;
@@ -38,4 +60,5 @@ public class GameManager : Singleton<GameManager>
         UpdateGameState(GameStates.Game);
     }
 
+    #endregion
 }

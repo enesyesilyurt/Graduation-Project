@@ -2,7 +2,7 @@
 using UnityEngine;
 using PathCreation;
 using Cinemachine;
-using NoName.Utilities;
+using Shadout.Utilities;
 using System;
 
 public class CameraManager : Singleton<CameraManager>
@@ -46,21 +46,22 @@ public class CameraManager : Singleton<CameraManager>
 
     #region Unity Methods
 
-    private void Awake()
+    public void InitCameraManager()
     {
         pathCreator = PathManager.Instance.PathCreator;
         cameras = new List<CinemachineVirtualCamera>
         {
             startCamera,
             runCamera,
-            flyCamera
+            flyCamera,
+            endCamera
         };
 
         player.ContenderStateChanged += OnContenderStateChanged;
         GameManager.Instance.GameStateChanged += OnGameStateChanged;
     }
 
-    private void InitStartCam()
+    private void OpenStartCam()
     {
         CloseAllCameras();
         startCamera.gameObject.SetActive(true);
@@ -74,7 +75,7 @@ public class CameraManager : Singleton<CameraManager>
         );
     }
 
-    private void InitEndCam()
+    private void OpenEndCam()
     {
         CloseAllCameras();
         endCamera.gameObject.SetActive(true);
@@ -113,10 +114,10 @@ public class CameraManager : Singleton<CameraManager>
 
     private void CloseAllCameras()
     {
-        startCamera.gameObject.SetActive(false);
-        runCamera.gameObject.SetActive(false);
-        flyCamera.gameObject.SetActive(false);
-        endCamera.gameObject.SetActive(false);
+        for (int i = 0; i < cameras.Count; i++)
+        {
+            cameras[i].gameObject.SetActive(false);
+        }
     }
 
     #endregion
@@ -128,10 +129,10 @@ public class CameraManager : Singleton<CameraManager>
         switch (newState)
         {
             case GameStates.Start:
-                InitStartCam();
+                OpenStartCam();
                 break;
             case GameStates.End:
-                InitEndCam();
+                OpenEndCam();
                 break;
         }
     }

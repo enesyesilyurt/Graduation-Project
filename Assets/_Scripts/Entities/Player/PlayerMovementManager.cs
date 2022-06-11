@@ -15,13 +15,6 @@ public class PlayerMovementManager : ContenderMovementBase
 
 	#region Unity Methods
 
-	private void Start() 
-	{
-        InitMovement();
-
-		contender.ContenderStateChanged += OnContenderStateChanged;
-	}
-
     protected override void Update() 
     {
         base.Update();
@@ -32,9 +25,11 @@ public class PlayerMovementManager : ContenderMovementBase
 
 	#region Methods
 
-    private void InitMovement()
+    public override void Init()
     {
+        base.Init();
         transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled);
+		contender.ContenderStateChanged += OnContenderStateChanged;
     }
 
     private void Move()
@@ -117,7 +112,6 @@ public class PlayerMovementManager : ContenderMovementBase
         switch (newState)
         {
             case ContenderState.WaitStart:
-                if(currentState != ContenderState.End) InitMovement();
                 break;
             case ContenderState.Run:
                 SetMovementRun();
@@ -129,6 +123,7 @@ public class PlayerMovementManager : ContenderMovementBase
                 SetMovementFly();
                 break;
             case ContenderState.End:
+                GameManager.Instance.UpdateGameState(GameStates.End);
                 break;
         }
     }

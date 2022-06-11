@@ -19,16 +19,16 @@ namespace Shadout.Controllers
 
 		#region Unity Methods
 
-		private void Awake()
+		#endregion
+
+		#region Methods
+
+		public void Init()
 		{
 			contender = GetComponent<ContenderBase>();
 
 			contender.ContenderStateChanged += OnContenderStateChanged;
 		}
-
-		#endregion
-
-		#region Methods
 		
 		private void SetAnimations(string newAnimName)
 		{

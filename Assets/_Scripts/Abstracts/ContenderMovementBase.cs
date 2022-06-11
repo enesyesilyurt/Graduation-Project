@@ -46,7 +46,16 @@ namespace Shadout.Controllers
 
 		#region Unity Methods
 
-		private void Awake()
+        protected virtual void Update()
+		{
+			distanceTravelled += currentSpeed * Time.deltaTime;
+		}
+
+		#endregion
+
+		#region Methods
+
+		public virtual void Init()
 		{
 			pathCreator = PathManager.Instance.PathCreator;
 			var position = transform.position;
@@ -63,15 +72,6 @@ namespace Shadout.Controllers
 
 			contender.ContenderStateChanged += OnContenderStateChanged;
 		}
-
-        protected virtual void Update()
-		{
-			distanceTravelled += currentSpeed * Time.deltaTime;
-		}
-
-		#endregion
-
-		#region Methods
 		
 		protected void SetMovementSkate()
 		{

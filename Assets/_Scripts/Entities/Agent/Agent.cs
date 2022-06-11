@@ -21,12 +21,6 @@ public class Agent : ContenderBase
     private float timer = 0;
     private float controlTime = 2;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        rb = GetComponent<Rigidbody>();
-    }
-
     private void Start()
     {
         ContenderStateChanged += OnContenderStateChanged;
@@ -63,6 +57,13 @@ public class Agent : ContenderBase
         }
         
         stateMachine.Tick();
+    }
+
+    public override void InitContender()
+    {
+        base.InitContender();
+
+        rb = GetComponent<Rigidbody>();
     }
 
     private void InitStateMachine()
