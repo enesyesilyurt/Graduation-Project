@@ -21,8 +21,8 @@ public class PathManager : Singleton<PathManager>
     public void InitPathManager()
     {
         LevelManager.Instance.levelCompleted += OnlevelCompleted;
-        pathCreator = LevelManager.Instance.Level.PathCreator;
-        roadMeshCreator = LevelManager.Instance.Level.RoadMeshCreator;
+        pathCreator = LevelManager.Instance.Level.GetComponent<PathCreator>();
+        roadMeshCreator = LevelManager.Instance.Level.GetComponent<RoadMeshCreator>();
 
         ContenderManager.Instance.Init();
         finalRoad.InitFinalRoad();
@@ -31,7 +31,9 @@ public class PathManager : Singleton<PathManager>
 
     private void OnlevelCompleted()
     {
-        pathCreator = LevelManager.Instance.Level.PathCreator;
-        roadMeshCreator = LevelManager.Instance.Level.RoadMeshCreator;
+        pathCreator = LevelManager.Instance.Level.GetComponent<PathCreator>();
+        roadMeshCreator = LevelManager.Instance.Level.GetComponent<RoadMeshCreator>();
+        finalRoad.InitAnimatedObject();
+        ContenderManager.Instance.Reset();
     }
 }

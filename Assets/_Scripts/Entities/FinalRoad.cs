@@ -1,87 +1,96 @@
 using System;
+using Shadout.Models;
 using UnityEngine;
 
 namespace Shadout.Controllers
 {
-	public class FinalRoad : MonoBehaviour
-	{
-		#region SerializedFields
+    public class FinalRoad : MonoBehaviour
+    {
+        #region SerializedFields
 
-		[SerializeField]
-		private Transform firstPlace;
+        [SerializeField]
+        private Transform firstPlace;
 
-		[SerializeField]
-		private Transform secondPlace;
-		
-		[SerializeField]
-		private Transform thirdPlace;
+        [SerializeField]
+        private Transform secondPlace;
 
-		[SerializeField]
-		private Transform particlesParent;
+        [SerializeField]
+        private Transform thirdPlace;
 
-		[SerializeField]
-		private Transform radialBackGround;
+        [SerializeField]
+        private Transform particlesParent;
 
-		#endregion
+        [SerializeField]
+        private Transform radialBackGround;
 
-		#region Variables
+        #endregion
 
-		private Vector3 radialBackGroundScale;
-		private int index = 0;
+        #region Variables
 
-		#endregion
+        private Vector3 radialBackGroundScale;
+        private int index = 0;
 
-		#region Events
+        #endregion
 
-		#endregion
+        #region Events
 
-		#region Props
+        #endregion
 
-		#endregion
+        #region Props
 
-		#region Unity Methods
+        #endregion
 
-		private void OnTriggerEnter(Collider other) 
-		{
-			var contender = other.GetComponent<ContenderBase>();
-			if (contender != null)
-			{
-				switch (index)
-				{
-					case 0:
-						contender.OnWinGame(index, firstPlace.position);
-						break;
-					case 1:
-						contender.OnWinGame(index, secondPlace.position);
-						break;
-					case 2:
-						contender.OnWinGame(index, thirdPlace.position);
-						GameManager.Instance.UpdateGameState(GameStates.End);
-						break;
-				}
-				index++;
-			}
-		}
+        #region Unity Methods
 
-		public void InitFinalRoad()
-		{
-			GameManager.Instance.GameStateChanged += OnGameStateChanged;
+        private void Awake() {
+            GameManager.Instance.GameStateChanged += OnGameStateChanged;
+        }
 
-			radialBackGroundScale = radialBackGround.localScale;
-		}
+        private void OnTriggerEnter(Collider other)
+        {
+            var contender = other.GetComponent<ContenderBase>();
+            if (contender != null)
+            {
+                switch (index)
+                {
+                    case 0:
+                        contender.OnWinGame(index, firstPlace.position);
+                        break;
+                    case 1:
+                        contender.OnWinGame(index, secondPlace.position);
+                        break;
+                    case 2:
+                        contender.OnWinGame(index, thirdPlace.position);
+                        if (GameManager.Instance.CurrentState != GameStates.End)
+                        {
+                            GameManager.Instance.UpdateGameState(GameStates.End);
+                        }
+                        break;
+                }
+                index++;
+            }
+        }
 
-		private void InitAnimatedObject()
-		{
-			particlesParent.gameObject.SetActive(false);
-			transform.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(-.001f);
-			transform.eulerAngles = new Vector3(0, 90, 0);
-		}
+        public void InitFinalRoad()
+        {
+            radialBackGroundScale = radialBackGround.localScale;
+            InitAnimatedObject();
+        }
 
-		private void OpenAnimatedObjects()
-		{
-			particlesParent.gameObject.SetActive(true);
-			radialBackGround.localScale = radialBackGroundScale;
-		}
+        public void InitAnimatedObject()
+        {
+            index = 0;
+            particlesParent.gameObject.SetActive(false);
+            transform.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(-.001f);
+            transform.LookAt(PathManager.Instance.PathCreator.path.GetPointAtDistance(-1f));
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y -180 , transform.eulerAngles.z);
+        }
+
+        public void OpenAnimatedObjects()
+        {
+            particlesParent.gameObject.SetActive(true);
+            radialBackGround.localScale = radialBackGroundScale;
+        }
 
         #endregion
 
@@ -89,23 +98,17 @@ namespace Shadout.Controllers
 
         #endregion
 
-        #region Callbacks
-
         private void OnGameStateChanged(GameStates newState)
         {
             switch (newState)
-			{
-				case GameStates.Start:
-					InitAnimatedObject();
-					index = 0;
-					break;
-				case GameStates.Game:
-					break;
-				case GameStates.End:
-					OpenAnimatedObjects();
-					break;
-			}
+            {
+                case GameStates.End:
+                    OpenAnimatedObjects();
+                    break;
+            }
         }
+
+        #region Callbacks
 
         #endregion
     }

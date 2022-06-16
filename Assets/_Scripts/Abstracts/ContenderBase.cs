@@ -15,6 +15,7 @@ namespace Shadout.Controllers
 		protected ContenderVehicleController contenderVehicleController;
 
 		protected ContenderState currentContenderState = ContenderState.End;
+		
 
 		#endregion
 
@@ -65,7 +66,7 @@ namespace Shadout.Controllers
 			transform.LeanMoveY(newPosition.y, 1).setEaseOutSine();
 			transform.LeanMoveZ(newPosition.z, 1).setEaseOutBack();
 
-			transform.LeanRotateAround(Vector3.up, 180, 1);
+			//transform.LeanRotateAround(Vector3.up, 180, 1);
     	}
 
 		#endregion
@@ -77,9 +78,9 @@ namespace Shadout.Controllers
 			switch (newState)
 			{
 				case GameStates.Start:
-					UpdateContenderState(ContenderState.WaitStart);
 					break;
 				case GameStates.Game:
+					currentContenderState = ContenderState.Run;
 					UpdateContenderState(ContenderState.Run);
 					break;
 				case GameStates.End:

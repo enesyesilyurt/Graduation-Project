@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Shadout.Controllers;
 using UnityEngine;
 
 public class WaitStartState : IState
@@ -15,7 +16,8 @@ public class WaitStartState : IState
 
     public void OnEnter()
     {
-        agent.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(distanceTravelled);
+        // agent.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(distanceTravelled);
+        // agent.position += agent.GetComponent<AgentMovementController>().ReferenceObject.right * agent.GetComponent<AgentMovementController>().SidePosition;
     }
 
     public void OnExit()

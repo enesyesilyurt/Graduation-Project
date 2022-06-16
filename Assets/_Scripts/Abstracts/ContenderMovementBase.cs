@@ -27,7 +27,6 @@ namespace Shadout.Controllers
 		#region Variables
 		
 		protected ContenderBase contender;
-		protected PathCreator pathCreator;
 		protected Rigidbody rb;
 		protected Transform followerObject;
 		protected Transform referenceObject;
@@ -48,6 +47,8 @@ namespace Shadout.Controllers
 
         protected virtual void Update()
 		{
+			if (contender.CurrentContenderState != ContenderState.Run && contender.CurrentContenderState != ContenderState.Skate) return;
+			
 			distanceTravelled += currentSpeed * Time.deltaTime;
 		}
 
@@ -57,11 +58,11 @@ namespace Shadout.Controllers
 
 		public virtual void Init()
 		{
-			pathCreator = PathManager.Instance.PathCreator;
+			currentSpeed = runSpeed;
 			var position = transform.position;
 
 			referenceObject = new GameObject("referenceObject").transform;
-			referenceObject.position = pathCreator.path.GetClosestPointOnPath(position);
+			referenceObject.position = PathManager.Instance.PathCreator.path.GetClosestPointOnPath(position);
 
 			followerObject = new GameObject("followerObject").transform;
 			followerObject.position = position - transform.forward * -.2f;
@@ -95,6 +96,7 @@ namespace Shadout.Controllers
             if (newState == ContenderState.End)
 			{
 				currentSpeed = 0;
+				rb.velocity = Vector3.zero;
 			}
         }
 

@@ -35,7 +35,6 @@ public class CameraManager : Singleton<CameraManager>
 
     #region Variables
 
-    private PathCreator pathCreator;
     private float distanceTravelled;
 
     private float smoothSpeed = .125f;
@@ -48,7 +47,6 @@ public class CameraManager : Singleton<CameraManager>
 
     public void InitCameraManager()
     {
-        pathCreator = PathManager.Instance.PathCreator;
         cameras = new List<CinemachineVirtualCamera>
         {
             startCamera,
@@ -58,7 +56,6 @@ public class CameraManager : Singleton<CameraManager>
         };
 
         player.ContenderStateChanged += OnContenderStateChanged;
-        GameManager.Instance.GameStateChanged += OnGameStateChanged;
     }
 
     private void OpenStartCam()
@@ -95,7 +92,8 @@ public class CameraManager : Singleton<CameraManager>
 
     private void RunFollow()
     {
-        var direction = pathCreator.path.GetPointAtDistance(distanceTravelled) - pathCreator.path.GetPointAtDistance(distanceTravelled + 1);
+        var direction = PathManager.Instance.PathCreator.path.GetPointAtDistance(distanceTravelled) 
+            - PathManager.Instance.PathCreator.path.GetPointAtDistance(distanceTravelled + 1);
 
         Vector3 desiredPosition = player.transform.position + direction * runOffsetZ + Vector3.up * runOffsetY;
         Vector3 smoothedPosition = Vector3.Lerp(runCamera.transform.position, desiredPosition, smoothSpeed);
@@ -124,23 +122,13 @@ public class CameraManager : Singleton<CameraManager>
 
     #region Callbacks
 
-    private void OnGameStateChanged(GameStates newState)
-    {
-        switch (newState)
-        {
-            case GameStates.Start:
-                OpenStartCam();
-                break;
-            case GameStates.End:
-                OpenEndCam();
-                break;
-        }
-    }
-
     private void OnContenderStateChanged(ContenderState currentState, ContenderState newState)
     {
         switch (newState)
         {
+            case ContenderState.WaitStart:
+                OpenStartCam();
+                break;
             case ContenderState.Fly:
                 CloseAllCameras();
                 flyCamera.gameObject.SetActive(true);
@@ -148,6 +136,9 @@ public class CameraManager : Singleton<CameraManager>
             case ContenderState.Run:
                 CloseAllCameras();
                 runCamera.gameObject.SetActive(true);
+                break;
+            case ContenderState.End:
+                OpenEndCam();
                 break;
         }
     }

@@ -21,10 +21,9 @@ public class Agent : ContenderBase
     private float timer = 0;
     private float controlTime = 2;
 
-    private void Start()
+    private void Awake()
     {
         ContenderStateChanged += OnContenderStateChanged;
-        InitStateMachine();
     }
 
     private void Update()
@@ -55,7 +54,7 @@ public class Agent : ContenderBase
             }
 
         }
-        
+        if(stateMachine == null) return;
         stateMachine.Tick();
     }
 
@@ -121,6 +120,12 @@ public class Agent : ContenderBase
 
     private void OnContenderStateChanged(ContenderState currentState, ContenderState newState)
     {
+        if (newState == ContenderState.WaitStart)
+        {
+            stateMachine = null;
+            states?.Clear();
+            InitStateMachine();
+        }
         if (newState == ContenderState.Run)
         {
             timer = 0;

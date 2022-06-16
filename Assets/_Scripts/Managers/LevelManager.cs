@@ -1,33 +1,22 @@
 using System;
 using Shadout.Utilities;
 using UnityEngine;
-using PathCreation;
-using PathCreation.Examples;
 
 namespace Shadout.Models
 {
-	[Serializable]
-	public class Level
-	{
-		public GameObject LevelPrefab;
-		public PathCreator PathCreator;
-		public RoadMeshCreator RoadMeshCreator;
-		public int CollectablePercent;
-	}
-
 	public class LevelManager : Singleton<LevelManager>
 	{
 		#region SerializedFields
 
 		[SerializeField]
-		private Level[] levels;
+		private GameObject[] levels;
 
 		#endregion
 
 		#region Variables
 
 		private int index;
-		private Level level;
+		private GameObject level;
 		private GameObject currentLevelPrefab;
 
 		#endregion
@@ -40,7 +29,7 @@ namespace Shadout.Models
 
 		#region Props
 
-		public Level Level => level;
+		public GameObject Level => level;
 
 		#endregion
 
@@ -52,17 +41,33 @@ namespace Shadout.Models
 
 		public void InitLevelManager()
 		{
+			for (int i = 0; i < levels.Length; i++)
+			{
+				levels[i].SetActive(false);
+			}
 			level = levels[0];
-			currentLevelPrefab = Instantiate(levels[0].LevelPrefab,Vector3.zero,Quaternion.identity);
+			currentLevelPrefab = level;
+			currentLevelPrefab.SetActive(true);
 
 			PathManager.Instance.InitPathManager();
 		}
 
 		public void GetNextLevel()
 		{
-			Destroy(currentLevelPrefab);
-			currentLevelPrefab = Instantiate(levels[++index].LevelPrefab,Vector3.zero,Quaternion.identity);
+			currentLevelPrefab.SetActive(false);
+			level = levels[++index];
+			currentLevelPrefab = level;
+			currentLevelPrefab.SetActive(true);
 			levelCompleted?.Invoke();
+
+			GameManager.Instance.UpdateGameState(GameStates.Start);
+		}
+
+		public void RestartLevel()
+		{
+			levelCompleted?.Invoke();
+
+			GameManager.Instance.UpdateGameState(GameStates.Start);
 		}
 
         #endregion

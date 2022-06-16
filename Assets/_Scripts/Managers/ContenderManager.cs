@@ -36,6 +36,15 @@ namespace Shadout.Models
 			for (int i = 0; i < contenders.Length; i++)
 			{
 				contenders[i].InitContender();
+				contenders[i].UpdateContenderState(ContenderState.WaitStart);
+			}
+		}
+
+		public void Reset()
+		{
+			for (int i = 0; i < contenders.Length; i++)
+			{
+				contenders[i].UpdateContenderState(ContenderState.WaitStart);
 			}
 		}
 

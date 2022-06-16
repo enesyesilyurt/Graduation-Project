@@ -18,6 +18,8 @@ namespace Shadout.Models
 
 		#region Variables
 
+		public bool IsWinGame = false;
+
 		#endregion
 
 		#region Events
@@ -38,6 +40,7 @@ namespace Shadout.Models
 		{
 			GameManager.Instance.GameStateChanged += OnGameStateChanged;
 			nextLevelButton.onClick.AddListener(()=> LevelManager.Instance.GetNextLevel());
+			restartButton.onClick.AddListener(()=> LevelManager.Instance.RestartLevel());
 		}
 
         #endregion
@@ -53,7 +56,17 @@ namespace Shadout.Models
 					break;
 				case GameStates.End:
 					endPanel.SetActive(true);
-					Debug.Log("game end");
+					if (IsWinGame)
+					{
+						nextLevelButton.gameObject.SetActive(true);
+						restartButton.gameObject.SetActive(false);
+					}
+					else
+					{
+						nextLevelButton.gameObject.SetActive(false);
+						restartButton.gameObject.SetActive(true);
+					}
+					IsWinGame = false;
 					break;
 			}
         }

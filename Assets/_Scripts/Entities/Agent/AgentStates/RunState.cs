@@ -29,10 +29,11 @@ public class RunState : IState
 
         var tempTransform = agent.transform;
         var rotation = tempTransform.rotation;
-        rotation = new Quaternion(0, rotation.y, rotation.z, rotation.w);
         tempTransform.rotation = rotation;
-        agent.transform.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled);
+        agent.transform.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(PathManager.Instance.PathCreator.path.GetClosestDistanceAlongPath(agent.transform.position)
+            ) + agentMovementController.SidePosition * Vector3.right;
         agent.transform.LookAt(PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled + 1));
+        rotation = new Quaternion(0, rotation.y, 0, rotation.w);
     }
 
     public void OnExit()
@@ -45,15 +46,14 @@ public class RunState : IState
         referanceObject.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled);
         referanceObject.LookAt(PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled + 1));
 
-        Transform tempTransform;
-        (tempTransform = agent.transform).position = Vector3.Lerp
+        agent.transform.position = Vector3.Lerp
         (
             agent.transform.position,
             PathManager.Instance.PathCreator.path.GetPointAtDistance(agent.DistanceTravelled) + referanceObject.right * agentMovementController.SidePosition  + Vector3.up * agentMovementController.playerHeight,
             .2f
         );
 
-        followerObject.position = Vector3.Lerp(followerObject.position, tempTransform.position, .2f);
+        followerObject.position = Vector3.Lerp(followerObject.position, agent.transform.position, .2f);
         followerObject.LookAt(agent.transform);
         agent.transform.rotation = followerObject.rotation;
     }
