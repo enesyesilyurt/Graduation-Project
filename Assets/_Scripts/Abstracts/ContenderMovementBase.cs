@@ -47,6 +47,10 @@ namespace Shadout.Controllers
 
         protected virtual void Update()
 		{
+			if (transform.position.y <= 0)
+			{
+				transform.position = PathManager.Instance.PathCreator.path.GetPointAtDistance(distanceTravelled - 10);
+			}
 			if (contender.CurrentContenderState != ContenderState.Run && contender.CurrentContenderState != ContenderState.Skate) return;
 			
 			distanceTravelled += currentSpeed * Time.deltaTime;

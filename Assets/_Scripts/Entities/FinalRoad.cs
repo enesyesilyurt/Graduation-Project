@@ -44,6 +44,7 @@ namespace Shadout.Controllers
 
         private void Awake() {
             GameManager.Instance.GameStateChanged += OnGameStateChanged;
+            LevelManager.Instance.levelCompleted += ()=> index = 0;
         }
 
         private void OnTriggerEnter(Collider other)

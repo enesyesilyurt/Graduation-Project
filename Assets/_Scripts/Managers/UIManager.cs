@@ -43,6 +43,11 @@ namespace Shadout.Models
 			restartButton.onClick.AddListener(()=> LevelManager.Instance.RestartLevel());
 		}
 
+		public void QuitGame()
+		{
+			Application.Quit();
+		}
+
         #endregion
 
         #region Callbacks
@@ -59,7 +64,7 @@ namespace Shadout.Models
 					if (IsWinGame)
 					{
 						nextLevelButton.gameObject.SetActive(true);
-						restartButton.gameObject.SetActive(false);
+						restartButton.gameObject.SetActive(true);
 					}
 					else
 					{
